@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: osrm-pv-claim
+  namespace: openst
+  labels:
+    app: osrm
+  annotations:
+    volume.beta.kubernetes.io/storage-class: gp2
+spec:
+  storageClassName: gp2
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 4Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: osrm-api
+  namespace: openst
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: osrm-api
+    spec:
+      containers:
+        - name: osrm-api
+          image: osrm/osrm-backend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          command:
+            - /bin/sh
+            - -c
+            - osrm-routed --algorithm mld /data/vietnam-latest.osm
+          volumeMounts:
+            - mountPath: /data
+              name: osrm
+      volumes:
+        - name: osrm
+          persistentVolumeClaim:
+            claimName: osrm-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: osrm-api
+  labels:
+    app: osrm-api
+spec:
+  selector:
+    app: osrm-api
+  ports:
+    - port: 5000
+      protocol: TCP
+      targetPort: 5000
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: osrm-api
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: openst.danghung.xyz
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: osrm-api
+              servicePort: 5000
+           

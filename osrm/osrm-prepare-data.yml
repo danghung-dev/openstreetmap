@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: osrm-prepare-data
+  namespace: openst
+  labels:
+    app: osrm-prepare-data
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: osrm-prepare-data
+    spec:
+      containers:
+        - name: osrm-prepare-data
+          image: danghung/openst:osrm-prepare
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - mountPath: /data
+              name: osrm
+      volumes:
+        - name: osrm
+          persistentVolumeClaim:
+            claimName: osrm-pv-claim
