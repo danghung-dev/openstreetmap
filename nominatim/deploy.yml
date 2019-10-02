@@ -1,7 +1,25 @@
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nominatim-pv-claim
+  namespace: openst
+  labels:
+    app: osm-nominatim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: gp2
+spec:
+  storageClassName: gp2
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---      
+apiVersion: v1
 kind: Service
 metadata:
   name: nominatim
+  namespace: openst
 spec:
   ports:
   - port: 80
@@ -14,8 +32,9 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: nominatim
+  namespace: openst
 spec:
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
@@ -23,27 +42,15 @@ spec:
         track: stable
     spec:
       volumes:
-      - name: nominatim-secret-volume
-        secret:
-          secretName: nominatim-storage-secret
+        - name: osm-nominatim-volume
+          persistentVolumeClaim:
+            claimName: nominatim-pv-claim
       containers:
       - name: nominatim-k8s
-        image: peterevans/nominatim-k8s:latest
-        env:
-        - name: NOMINATIM_MODE
-          value: RESTORE
-        - name: NOMINATIM_DATA_LABEL
-          value: maldives-20161213
-        - name: NOMINATIM_SA_KEY_PATH
-          value: "/etc/nominatim-secret-volume/service-account-key.json"
-        - name: NOMINATIM_PROJECT_ID
-          value: my-project
-        - name: NOMINATIM_GS_BUCKET
-          value: "gs://my-bucket"
+        image: danghung/osm-nominatim
         volumeMounts:
-        - name: nominatim-secret-volume
-          readOnly: true
-          mountPath: /etc/nominatim-secret-volume
+          - mountPath: /var/lib/postgresql/11/main
+            name: osm-nominatim-volume
         ports:
         - containerPort: 8080
         readinessProbe:
@@ -52,3 +59,20 @@ spec:
             port: 8080
           initialDelaySeconds: 30
           timeoutSeconds: 1
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nominatim
+  namespace: openst
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: nominatim.danghung.xyz
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: nominatim
+              servicePort: 80

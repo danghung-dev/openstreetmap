@@ -1,0 +1,6 @@
+{
+  "javascript.implicitProjectConfig.experimentalDecorators": true,
+  "editor.formatOnSave": true,
+  "debug.node.autoAttach": "on",
+  "typescript.preferences.importModuleSpecifier": "relative"
+}

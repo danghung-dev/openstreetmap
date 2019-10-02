@@ -6,4 +6,6 @@
 4. Giờ phải test
 docker run -p 7070:8080 --name nomimatim danghung/osm-nominatim
 
-docker run -p 7070:8080 --name nomimatim -v /Users/hung/projects/smartlog/openst/nominatim-data:/nominatim-data danghung/osm-nominatim
+docker run -p 7070:8080 --name nomimatim -v /Users/hung/projects/smartlog/openst/nominatim-data:/home/nominatim/data danghung/osm-nominatim
+
+5. Đã test xong, giờ phải viết yml để up lên k8s 
