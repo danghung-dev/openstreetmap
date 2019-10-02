@@ -18,21 +18,28 @@ import { expressListController } from './common';
 
 const routingControllersOptions = {
   authorizationChecker: async (action: Action, roles: string[]) => {
-    const user = action.request.user;
-    if (user && !roles.length) {
-      return true;
-    }
-    if (user && roles.find(role => user.roles.indexOf(role) !== -1)) {
+    const API_KEY = '0d16e462-43a7-44a6-b810-b444c8f60ae0';
+    const { user } = action.request;
+    const { apiKey = null } = user || {};
+    if (apiKey === API_KEY) {
       return true;
     }
     return false;
+    // const user = action.request.user;
+    // if (user && !roles.length) {
+    //   return true;
+    // }
+    // if (user && roles.find(role => user.roles.indexOf(role) !== -1)) {
+    //   return true;
+    // }
+    // return false;
   },
   currentUserChecker: (action: Action) => {
     return action.request.user;
   },
   controllers: expressListController, // we specify controllers we want to use
   middlewares: [AuthenMiddleware, LogMiddleware],
-  routePrefix: '/v1'
+  routePrefix: '/v1',
 };
 
 // creates express app, registers all controller routes and returns you express app instance
@@ -85,4 +92,3 @@ app.listen(ConfigSerivce.env.PORT, err => {
   // TODO: send log to slack with timezone +7
   logger.info('server.started', { time: new Date() });
 });
-
