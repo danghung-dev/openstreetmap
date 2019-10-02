@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: osm-tiles-server-temp
+  namespace: openst
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: osm-tiles-server
+    spec:
+      containers:
+        - name: osm-tiles-server
+          image: rastasheep/ubuntu-sshd
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/lib/mod_tile
+              name: osm-mod-tile
+      volumes:
+        - name: osm-mod-tile
+          persistentVolumeClaim:
+            claimName: osm-mod-tile-pv-claim

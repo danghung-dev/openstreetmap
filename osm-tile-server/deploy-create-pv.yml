@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: osm-mod-tile-pv-claim
+  namespace: openst
+  labels:
+    app: osm-tiles-server
+  annotations:
+    volume.beta.kubernetes.io/storage-class: gp2
+spec:
+  storageClassName: gp2
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
