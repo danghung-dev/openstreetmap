@@ -47,7 +47,8 @@ spec:
             claimName: nominatim-pv-claim
       containers:
       - name: nominatim-k8s
-        image: danghung/osm-nominatim
+        image: danghung/osm-nominatim:latest
+        imagePullPolicy: Always
         volumeMounts:
           - mountPath: /var/lib/postgresql/11/main
             name: osm-nominatim-volume

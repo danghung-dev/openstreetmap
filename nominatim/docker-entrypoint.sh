@@ -24,6 +24,7 @@ echo "bat dau gia nen $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.tgz_* $NOMINATI
 tar -xvf $NOMINATIM_DATA_PATH/nominatim_data.tgz_aa -C $NOMINATIM_POSTGRESQL_DATA_PATH/
 mv $NOMINATIM_POSTGRESQL_DATA_PATH/postgresdata/* $NOMINATIM_POSTGRESQL_DATA_PATH/
 chown -R postgres:postgres $NOMINATIM_POSTGRESQL_DATA_PATH
+chmod 700 $NOMINATIM_POSTGRESQL_DATA_PATH
 echo "ket thuc giai nen"
 # ========= Copy postgres data from S3 =========
 
