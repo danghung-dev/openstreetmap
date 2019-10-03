@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-nominatim
+  namespace: openst
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: node-nominatim
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: node-nominatim
+  namespace: openst
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: node-nominatim
+        track: stable
+    spec:
+      containers:
+      - name: node-nominatim
+        image: danghung/node-nominatim:latest
+        imagePullPolicy: Always
+        env:
+        - name: nominatimHost
+          value: nominatim
+          name: PORT
+          value: "3000"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: node-nominatim
+  namespace: openst
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: address.danghung.xyz
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: node-nominatim
+              servicePort: 80

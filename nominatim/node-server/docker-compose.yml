@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    #build: .
+    image: node-nominatim
+    ports:
+    - "3001:3000"
+    environment:
+    - PORT=3000
+  

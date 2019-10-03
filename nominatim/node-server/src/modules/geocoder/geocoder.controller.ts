@@ -21,17 +21,18 @@ import {
   GeoCoderAddressArg,
 } from './address.interface';
 import axios, { AxiosRequestConfig } from 'axios';
+import { ConfigSerivce } from '../../config/config.service';
 
 //#region import
 @JsonController('/address')
 export class LocationController {
   @Authorized()
-  @Get('/latlng')
+  @Get('/latlon')
   @ResponseSchema(GeoCoderAddressResponse)
   async getAddress(@QueryParams() query: GeoCoderAddressArg) {
     try {
       const option: AxiosRequestConfig = {
-        url: `http://nominatim.danghung.xyz/reverse?lat=${query.lat}&lon=${
+        url: `http://${ConfigSerivce.env.nominatimHost}/reverse?lat=${query.lat}&lon=${
           query.lon
         }&zoom=17&format=json&accept-language=vi`,
         method: 'GET',
