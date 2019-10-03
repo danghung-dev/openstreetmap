@@ -38,6 +38,12 @@ kubectl apply -f deploy-temp-pod-to-copy.yml
 kubectl cp <mod-tile>.zip <pod-name>:/var/lib/mod_tile
 kubectl exec -it <pod-name> /bin/bash
 unzip <mod-tile>.zip
+
+Repeat copy 
+s3://osm-nominatim/mod_tile/zoom0-13.zip
+s3://osm-nominatim/mod_tile/zoom14-16.zip
+s3://osm-nominatim/mod_tile/17.zip
+
 3. Delete temporary pod
 kubectl delete -f deploy-temp-pod-to-copy.yml
 4. Run
