@@ -20,4 +20,4 @@ spec:
       volumes:
         - name: osm-mod-tile
           persistentVolumeClaim:
-            claimName: osm-mod-tile-pv-claim
+            claimName: osm-tiles-server-pv-claim

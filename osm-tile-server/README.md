@@ -36,7 +36,12 @@ kubectl apply -f deploy-create-pv.yml
 2. Copy data to pvc
 kubectl apply -f deploy-temp-pod-to-copy.yml
 kubectl cp <mod-tile>.zip <pod-name>:/var/lib/mod_tile
-kubectl exec -it <pod-name> /bin/bash
+kubectl exec -it <pod-name> -n openst /bin/bash
+
+# install unzip
+apt-get update
+apt-get install unzip
+
 unzip <mod-tile>.zip
 
 Repeat copy 

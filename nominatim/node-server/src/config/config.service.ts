@@ -14,7 +14,6 @@ interface EnvConfig {
   nodeEnv: string;
   redisHost: string;
   redisPort: string;
-  
 }
 class ConfigServiceClass {
   public readonly env: EnvConfig;
@@ -22,11 +21,11 @@ class ConfigServiceClass {
   constructor(filePath?: string) {
     // console.log('filepath', filePath);
     // const config = dotenv.parse(fs.readFileSync(filePath ? filePath : '.env'));
-    const config = process.env
+    const config = process.env;
     // console.log('config', config);
     // this.envConfig = this.validateInput(config);
     this.env = {
-      PORT: parseInt(config.PORT, 10),
+      PORT: 3000,
       nominatimHost: config.nominatimHost || 'nominatim',
       bodyLimit: config.bodyLimit,
       nodeEnv: config.NODE_ENV,
